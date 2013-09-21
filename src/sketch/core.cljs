@@ -4,7 +4,7 @@
     [c2.scale :as scale]
     [c2.ticks :as ticks])
   (:require-macros 
-    [c2.util :refer [bind! pp p]]))
+    [c2.util :refer [bind! pp]]))
 
 ;; --------------------- 
 ;; Example 1
@@ -13,7 +13,10 @@
 
 (bind! ".ex1"  
   [:div
-    [:ol (map (fn [d] [:li d]) ["a" "b" "c"])]])
+   [:ol
+     [:li "wibble"]
+     [:li "wobble"]
+     [:li "woooo"]]])
 
 ;; --------------------- 
 ;; Example 2
@@ -47,17 +50,16 @@
 ;; SVG chart
 ;;
 (bind! ".ex4"
-  (let [data {:a 3, :b 5, :c 6, :d 9}
-        indexed (map-indexed (fn [i d] [i d]) data)
+  (let [data [4, 8, 15, 16, 23, 42]
         width 200 height 100
-        s (scale/linear :domain [0 (apply max (vals data))] 
+        s (scale/linear :domain [0 (apply max data)] 
                         :range  [0 width])
         h 20]
     [:div [:div.chart
      [:svg {:width width, :height height}
       
-      (map (fn [[i [key d]]]
-        [:rect {:width (s d) :height h, :y (* i h)}]) indexed)]]]))
+      (map-indexed (fn [i d]
+        [:rect {:width (s d) :height h, :y (* i h)}]) data)]]]))
 
 ;; --------------------- 
 ;; Example 5
