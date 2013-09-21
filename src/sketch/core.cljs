@@ -36,30 +36,33 @@
 ;; Example 3
 ;; ins and outs 
 ;;
-(defn ex3 [data]
+(defn update-ex3! [data]
   (bind! ".ex3"
     [:div
       [:p (map (fn [d] [:span (str "(" d ")")]) data)]]))
 
-(ex3 [1 2 3])
+(update-ex3! [1 2 3])
 (js/setInterval
-  #(ex3 (range (rand 15))) 8000)
+  #(update-ex3! (range (rand 15))) 8000)
 
 ;; --------------------- 
 ;; Example 4
 ;; SVG chart
 ;;
 (bind! ".ex4"
-  (let [data [4, 8, 15, 16, 23, 42]
+  (let [data [4, 8, 15]
         width 200 height 100
         s (scale/linear :domain [0 (apply max data)] 
                         :range  [0 width])
         h 20]
+
     [:div [:div.chart
      [:svg {:width width, :height height}
-      
+     
       (map-indexed (fn [i d]
-        [:rect {:width (s d) :height h, :y (* i h)}]) data)]]]))
+        [:rect {:width (s d) 
+                :height h, 
+                :y (* i h)}]) data)]]]))
 
 ;; --------------------- 
 ;; Example 5
@@ -78,9 +81,11 @@
    [:svg.chart {:width width, :height height}
     [:g {:transform "translate(10,15)"}
 
+     ;; bars
     (map-indexed (fn [i d]
       [:rect {:width (s d) :height h, :y (* i h)}]) data)
 
+     ;; bar labels
     (map-indexed (fn [i d]
       [:text {:x (s d) 
               :y (+ (/ h 2) (* i h))
@@ -89,13 +94,15 @@
               :dy ".35em"} d]) data)
    
 
+     ;; grid lines
     (map (fn [t] 
            (let [x (s t)] 
              [:line {:x1 x :x2 x 
                      :y1 0 :y2 120 
                      :stroke "#ccc"}])) 
          ticks)
-    
+
+     ;; grid line labels 
     (map (fn [t] 
            (let[x (s t)] 
              [:text.rule {:x x :y 0 :dy -3 :text-anchor "middle"} t])) 
