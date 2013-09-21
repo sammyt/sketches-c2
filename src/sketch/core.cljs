@@ -36,14 +36,16 @@
 ;; Example 3
 ;; ins and outs 
 ;;
-(defn update-ex3! [data]
+(defn unify-example [data]
   (bind! ".ex3"
     [:div
-      [:p (map (fn [d] [:span (str "(" d ")")]) data)]]))
+      [:p (unify data 
+                 (fn [d] [:p (str "(" d ")" (.now js/Date))])
+                 :key-fn (fn [d, i] (pp d) d))]]))
 
-(update-ex3! [1 2 3])
-(js/setInterval
-  #(update-ex3! (range (rand 15))) 8000)
+(unify-example ["a" "b" "c"])
+(js/setTimeout
+  #(unify-example ["c" "d" "b"]) 1000)
 
 ;; --------------------- 
 ;; Example 4
