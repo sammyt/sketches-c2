@@ -1,9 +1,10 @@
 (ns sketch.core
   (:require
     [c2.core :refer [unify]]
-    [c2.scale :as scale])
+    [c2.scale :as scale]
+    [c2.ticks :as ticks])
   (:require-macros 
-    [c2.util :refer [bind! p]]))
+    [c2.util :refer [bind! pp p]]))
 
 ;; --------------------- 
 ;; Example 1
@@ -46,39 +47,56 @@
 ;; SVG chart
 ;;
 (bind! ".ex4"
-  (let [data (map-indexed (fn [i d] [i d]) {:a 3, :b 5, :c 6, :d 9})
+  (let [data {:a 3, :b 5, :c 6, :d 9}
+        indexed (map-indexed (fn [i d] [i d]) data)
         width 200 height 100
-        s (scale/linear :domain [0 9] :range [0 width])
+        s (scale/linear :domain [0 (apply max (vals data))] 
+                        :range  [0 width])
         h 20]
-  [:div [:div.chart
-   [:svg {:width width, :height height}
-    (map (fn [[i [key d]]]
-      [:rect {:width (s d) :height h, :y (* i h)}]) data)
-    (map (fn [[i [key d]]]
-      [:text {:x (s d) 
-              :y (+ (/ h 2) (* i h))
-              :text-anchor "end"
-              :dx -3
-              :dy "0.35em"} d]) data)]]]))
+    [:div [:div.chart
+     [:svg {:width width, :height height}
+      
+      (map (fn [[i [key d]]]
+        [:rect {:width (s d) :height h, :y (* i h)}]) indexed)]]]))
 
 ;; --------------------- 
 ;; Example 5
 ;; SVG chart++
 ;;
 (bind! ".ex5"
-  (let [data (map-indexed (fn [i d] [i d]) {:a 3, :b 5, :c 6, :d 9})
-        width 200 height 100
-        s (scale/linear :domain [0 9] :range [0 width])
-        h 20]
-  [:div [:div.chart
-   [:svg {:width width, :height height}
-    (map (fn [[i [key d]]]
+(let [data [4, 8, 15, 16, 23, 42] 
+      width 440 height 140
+      domain [0 (apply max data)]
+      s (scale/linear :domain domain 
+                      :range  [0 (- width 20)])
+      h 20
+      ticks (:ticks (ticks/search domain))]
+
+  [:div [:div
+   [:svg.chart {:width width, :height height}
+    [:g {:transform "translate(10,15)"}
+
+    (map-indexed (fn [i d]
       [:rect {:width (s d) :height h, :y (* i h)}]) data)
-    (map (fn [[i [key d]]]
+
+    (map-indexed (fn [i d]
       [:text {:x (s d) 
               :y (+ (/ h 2) (* i h))
               :text-anchor "end"
               :dx -3
-              :dy "0.35em"} d]) data)]]]))
+              :dy ".35em"} d]) data)
+   
+
+    (map (fn [t] 
+           (let [x (s t)] 
+             [:line {:x1 x :x2 x 
+                     :y1 0 :y2 120 
+                     :stroke "#ccc"}])) 
+         ticks)
+    
+    (map (fn [t] 
+           (let[x (s t)] 
+             [:text.rule {:x x :y 0 :dy -3 :text-anchor "middle"} t])) 
+         ticks)]]]]))
 
 
