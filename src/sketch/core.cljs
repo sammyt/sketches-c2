@@ -41,7 +41,7 @@
     [:div
       [:p (unify data 
                  (fn [d] [:p (str "(" d ")" (.now js/Date))])
-                 :key-fn (fn [d, i] (pp d) d))]]))
+                 :key-fn (fn [d, i] d))]]))
 
 (unify-example ["a" "b" "c"])
 (js/setTimeout
@@ -71,43 +71,43 @@
 ;; SVG chart++
 ;;
 (bind! ".ex5"
-(let [data [4, 8, 15, 16, 23, 42] 
-      width 440 height 140
-      domain [0 (apply max data)]
-      s (scale/linear :domain domain 
-                      :range  [0 (- width 20)])
-      h 20
-      ticks (:ticks (ticks/search domain))]
+  (let [data [4, 8, 15, 16, 23, 42] 
+        width 440 height 140
+        domain [0 (apply max data)]
+        s (scale/linear :domain domain 
+                        :range  [0 (- width 20)])
+        h 20
+        ticks (:ticks (ticks/search domain))]
 
-  [:div [:div
-   [:svg.chart {:width width, :height height}
-    [:g {:transform "translate(10,15)"}
+    [:div [:div
+     [:svg.chart {:width width, :height height}
+      [:g {:transform "translate(10,15)"}
 
-     ;; bars
-    (map-indexed (fn [i d]
-      [:rect {:width (s d) :height h, :y (* i h)}]) data)
+       ;; bars
+      (map-indexed (fn [i d]
+        [:rect {:width (s d) :height h, :y (* i h)}]) data)
 
-     ;; bar labels
-    (map-indexed (fn [i d]
-      [:text {:x (s d) 
-              :y (+ (/ h 2) (* i h))
-              :text-anchor "end"
-              :dx -3
-              :dy ".35em"} d]) data)
-   
+       ;; bar labels
+      (map-indexed (fn [i d]
+        [:text {:x (s d) 
+                :y (+ (/ h 2) (* i h))
+                :text-anchor "end"
+                :dx -3
+                :dy ".35em"} d]) data)
+     
 
-     ;; grid lines
-    (map (fn [t] 
-           (let [x (s t)] 
-             [:line {:x1 x :x2 x 
-                     :y1 0 :y2 120 
-                     :stroke "#ccc"}])) 
-         ticks)
+       ;; grid lines
+      (map (fn [t] 
+             (let [x (s t)] 
+               [:line {:x1 x :x2 x 
+                       :y1 0 :y2 120 
+                       :stroke "#ccc"}])) 
+           ticks)
 
-     ;; grid line labels 
-    (map (fn [t] 
-           (let[x (s t)] 
-             [:text.rule {:x x :y 0 :dy -3 :text-anchor "middle"} t])) 
-         ticks)]]]]))
+       ;; grid line labels 
+      (map (fn [t] 
+             (let[x (s t)] 
+               [:text.rule {:x x :y 0 :dy -3 :text-anchor "middle"} t])) 
+           ticks)]]]]))
 
 
