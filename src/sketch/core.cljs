@@ -2,7 +2,10 @@
   (:require
     [c2.core :refer [unify]]
     [c2.scale :as scale]
-    [c2.ticks :as ticks])
+    [c2.ticks :as ticks]
+    [goog.dom :as dom]
+    [goog.events :as events]
+    [goog.events.EventType])
   (:require-macros 
     [c2.util :refer [bind! pp]]))
 
@@ -22,6 +25,7 @@
 ;; Example 3
 ;; ins and outs 
 ;;
+
 (defn unify-example [data]
   (bind! ".ex-keys"
     [:div
@@ -29,10 +33,18 @@
                  (fn [d] [:p (str "(" d ")" (.now js/Date))])
                  :key-fn (fn [d, i] d))]]))
 
-(unify-example ["a" "b" "c"])
+(events/listen 
+  (dom/getElement "btn-reset") "click"
+  (fn [] 
+    (dom/removeChildren (dom/getElementByClass "ex-keys"))
+    (unify-example ["a" "b" "c"])))
 
-(js/setTimeout
-  #(unify-example ["c" "d" "b"]) 1000)
+(events/listen 
+  (dom/getElement "btn-poke") "click"
+  #(unify-example ["d" "c" "b"]))
+
+
+(unify-example ["a" "b" "c"])
 
 ;; --------------------- 
 ;; Example 4

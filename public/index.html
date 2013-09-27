@@ -3,7 +3,9 @@
 <head>
   <meta charset="utf-8">
   <title>notes on c2</title> 
-</head>
+
+  <link rel="stylesheet" href="highlight/styles/ascetic.css">
+  </head>
 <style>
 .chart {
   font: 10px sans-serif;
@@ -20,17 +22,28 @@
   fill : black;
 }
 
+pre {
+  margin: 0.5em;
+}
+
 p {
   width: 42em;
+}
+
+.output {
+  border : 1px solid #eee;
+  width: 42em;
+  padding: 0.5em;
+  margin: 0.5em;
 }
 </style>
   <body>
   <header>
-    <h1>notes on c2</h2>
-    <p>from a d3 background</p>
+    <h1>cover tracks</h2>
+    <p>ClojureScript on "A Bar Chart, Part 1"</p>
   </header>
 
-  <pre>
+  <!--
   Things to cover.
 
   Why I'm looking at c2?
@@ -55,62 +68,79 @@ p {
     - "Et voilà!"
  
   Wrap up
-  </pre>
+  -->
 
   <h2>intro</h2>
-  <p>
 
-  Working as a client side developer there have been scant opportunities for me
-  to pursue my passion and use lisp in earnest.  ClojureScript has
-  unequivocally removed that obstacle, bringing a modern and powerful lisp to
-  javascript environments.
-
-  </p>
-  <p>
-
-  At a glance, Clojure, a predominately functional language might not seem like
-  a natural fit for client side development.  Much of the discussion in the
-  javascript community seems to focus on mutable models, and finding ways to bind views
-  onto those bits of mutable state. Can Clojure excel in such muddy waters?
-
-  </p>
-  <p>
-
-  Not so long ago I might have thought not. Then I discovered d3.  Mike
-  Bostocks d3 is (awesome) a javascript library for manipulating documents, but
-  what makes it unique is its focus on "transformation not representation"
-  which all sounds very functional!  I've been building applications with d3
-  for a couple of years now, and have seen a more functional style of
-  architecture reap many benefits.  
+  <p>Working as a client side developer there have been scant opportunities for
+  me to pursue a passion and use lisp in earnest.  ClojureScript has
+  unequivocally removed that obstacle, by bringing a modern and powerful lisp
+  to javascript environments.</p>
   
-  </p> 
+  <p>At a glance, Clojure, a predominately functional language might not seem
+  like a natural fit for client side development.  Much of the discussion in
+  the javascript community seems to focus on mutable models, and finding ways
+  to listen for changes in those model. Could Clojure excel in these muddy
+  state driven waters?</p>
 
-  <p>
-  
-  To get a feel for what building applications in clojurescript is like I've
+  <p>Not so long ago I might have thought it difficult. Then I discovered d3.
+  Mike Bostocks d3 is (awesome) a javascript library for manipulating
+  documents, but what makes it unique is its focus on "transformation not
+  representation" which all sounds very functional!  I've been building
+  applications with d3 for a couple of years now, and have seen a more
+  functional style of architecture reap many benefits, even when constrained by
+  the naturally imperative browser environment.</p> 
+
+  <p>To get a feel for what building applications in clojurescript is like I've
   been doing a series of cover tracks (copying things already built).  Recently
-  I've been focusing on a library called c2, which is heavily inspired by d3 but
-  also takes many cues from clojure to give a idiomatic experience. 
-  
-  </p>
+  I've been focusing on a library called c2, which is heavily inspired by d3
+  but also takes many cues from clojure to give a idiomatic experience.</p>
 
   
   <h2>c2 basics</h2>
 
-  <p>before I jumped in and tried to carbon copy one of Mikes d3 demos I needed
-  to get an idea of how c2 worked</p>
+  <p>Before jumping in and trying to cover one of Mikes demos its worth going
+  over the basics of c2.  Take a look at how to generate a simple ordered-list
+  using c2.</p>
 
   <pre>
-(bind! ".ex1"  
+  <code class="clojure">
+(bind! ".ex-basic"  
   [:div
    [:ol
      [:li "wibble"]
      [:li "wobble"]
      [:li "woooo"]]])
+  </code>
   </pre>
 
-  <div class="ex-basic"></div>
-  <div class="ex-keys"></div>
+  <p>The code is almost alarmingly simple, when I first saw it I assumed
+  there was something nasty waiting for me round the corner, things cant be 
+  this straight forward right?</p>
+
+  <p>Breaking it down at little there is a call to a function named
+  <code>bind!</code>, (the "!" indicates there are side effects) which takes
+  two parameters, a string css selector and a vector representing the desired
+  dom structure.</p>
+
+  <p><code>bind!</code> takes care of ensuring that the dom under the selector
+  matches the structure of the vector.  Heres the output.</p>
+  
+  <div class="ex-basic output"></div>
+
+  <p>Its worth taking a moment to understand how this simple example works.
+  The <code>bind!</code> function finds the desired target node from the css
+  selector then walks the dom under that node ensuring it matches the vector
+  provided.  It doesnt set innerHTML, it updates what it finds in place to match
+  the desired state.</p>
+
+
+  
+  <div class="output">
+    <button id="btn-poke">poke</button>
+    <button id="btn-reset">reset</button>
+    <div class="ex-keys"></div>
+  </div>
   
   <h2>the cover track</h2>
 
@@ -118,5 +148,7 @@ p {
   <div class="ex4"></div>
   <div class="ex5"></div>
   <script type="text/javascript" src="sketch-dev.js"></script>
-  </body>
+  <script src="highlight/highlight.pack.js"></script>
+  <script>hljs.initHighlightingOnLoad();</script>
+</body>
 </html>
