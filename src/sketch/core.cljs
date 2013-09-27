@@ -11,7 +11,7 @@
 ;; a simple list
 ;;
 
-(bind! ".ex1"  
+(bind! ".ex-basic"  
   [:div
    [:ol
      [:li "wibble"]
@@ -19,31 +19,18 @@
      [:li "woooo"]]])
 
 ;; --------------------- 
-;; Example 2
-;; nested data in a table
-;;
-(def grid-of-nums (map #(range 10) (range 5)))
-
-(defn make-nodes [vals]
-  (map (fn [v] [:td v]) vals))
-
-(bind! ".ex2"
-  [:div [:table
-    (map (fn [vals] 
-      [:tr (make-nodes vals)]) grid-of-nums)]])
-
-;; --------------------- 
 ;; Example 3
 ;; ins and outs 
 ;;
 (defn unify-example [data]
-  (bind! ".ex3"
+  (bind! ".ex-keys"
     [:div
       [:p (unify data 
                  (fn [d] [:p (str "(" d ")" (.now js/Date))])
                  :key-fn (fn [d, i] d))]]))
 
 (unify-example ["a" "b" "c"])
+
 (js/setTimeout
   #(unify-example ["c" "d" "b"]) 1000)
 

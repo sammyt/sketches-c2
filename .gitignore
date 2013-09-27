@@ -13,4 +13,4 @@ pom.xml.asc
 .DS_Store
 repl
 out
-
+public/sketch*.js

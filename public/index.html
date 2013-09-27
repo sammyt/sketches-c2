@@ -21,7 +21,7 @@
 }
 
 p {
-  width: 40em;
+  width: 42em;
 }
 </style>
   <body>
@@ -57,34 +57,64 @@ p {
   Wrap up
   </pre>
 
+  <h2>intro</h2>
   <p>
 
-  As a client side developer there have been scant opportunities for me to
-  pursue my passion and use lisp in earnest.  ClojureScript has unequivocally
-  removed that obstacle, bringing a modern and powerful lisp to javascript
-  environments.
+  Working as a client side developer there have been scant opportunities for me
+  to pursue my passion and use lisp in earnest.  ClojureScript has
+  unequivocally removed that obstacle, bringing a modern and powerful lisp to
+  javascript environments.
 
   </p>
   <p>
 
   At a glance, Clojure, a predominately functional language might not seem like
   a natural fit for client side development.  Much of the discussion in the
-  community seem to focus on mutable models, and finding ways to bind views onto
-  those bits of mutable state. Can Clojure excel in such muddy waters?
+  javascript community seems to focus on mutable models, and finding ways to bind views
+  onto those bits of mutable state. Can Clojure excel in such muddy waters?
 
   </p>
   <p>
 
   Not so long ago I might have thought not. Then I discovered d3.  Mike
-  Bostocks d3 is a javascript library for manipulating documents, but what
-  makes it unique is its focus on transformation not representation which all
-  sounds very functional!
+  Bostocks d3 is (awesome) a javascript library for manipulating documents, but
+  what makes it unique is its focus on "transformation not representation"
+  which all sounds very functional!  I've been building applications with d3
+  for a couple of years now, and have seen a more functional style of
+  architecture reap many benefits.  
+  
+  </p> 
 
+  <p>
+  
+  To get a feel for what building applications in clojurescript is like I've
+  been doing a series of cover tracks (copying things already built).  Recently
+  I've been focusing on a library called c2, which is heavily inspired by d3 but
+  also takes many cues from clojure to give a idiomatic experience. 
+  
   </p>
 
-  <div class="ex1"></div>
-  <div class="ex2"></div>
-  <div class="ex3"></div>
+  
+  <h2>c2 basics</h2>
+
+  <p>before I jumped in and tried to carbon copy one of Mikes d3 demos I needed
+  to get an idea of how c2 worked</p>
+
+  <pre>
+(bind! ".ex1"  
+  [:div
+   [:ol
+     [:li "wibble"]
+     [:li "wobble"]
+     [:li "woooo"]]])
+  </pre>
+
+  <div class="ex-basic"></div>
+  <div class="ex-keys"></div>
+  
+  <h2>the cover track</h2>
+
+
   <div class="ex4"></div>
   <div class="ex5"></div>
   <script type="text/javascript" src="sketch-dev.js"></script>
