@@ -1,8 +1,8 @@
 (defproject sketch "0.1.0-SNAPSHOT"
   :repositories {"sonatype-staging" "https://oss.sonatype.org/content/groups/staging"}
   :dependencies [[org.clojure/clojure "1.5.1"]
-                 [org.clojure/clojurescript "0.0-1889"]
-                 [org.clojure/core.async "0.1.0-SNAPSHOT"]
+                 [org.clojure/clojurescript "0.0-1859"]
+                 [org.clojure/core.async "0.1.222.0-83d0c2-alpha"]
                  [com.keminglabs/c2 "0.2.3"]]
   :hooks [leiningen.cljsbuild]
   :plugins [[lein-cljsbuild "0.3.3"]]

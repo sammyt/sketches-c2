@@ -5,9 +5,11 @@
     [c2.ticks :as ticks]
     [goog.dom :as dom]
     [goog.events :as events]
-    [goog.events.EventType])
+    [goog.events.EventType]
+    [cljs.core.async :refer [>! <! chan timeout alts!]])
   (:require-macros 
-    [c2.util :refer [bind! pp]]))
+    [c2.util :refer [bind! pp]]
+    [cljs.core.async.macros :refer [go]]))
 
 ;; --------------------- 
 ;; Example 1
@@ -108,5 +110,29 @@
              (let[x (s t)] 
                [:text.rule {:x x :y 0 :dy -3 :text-anchor "middle"} t])) 
            ticks)]]]]))
+
+
+
+(defn draw-chart! [data]
+  (bind! ".ex6"
+    [:div [:div.chart  
+      (let [size (scale/linear :domain [0 20]
+                               :range [0 100])]
+        (unify (map-indexed (fn [i d] [i d]) data)
+          (fn [[i d]] [:div.col 
+                   {:style 
+                    {:height (str (size d) "px")
+                     :left (str (* i 21) "px")}}])))]]))
+
+
+(let [seed (range 10)]
+  (draw-chart! seed)
+  (go 
+    (loop [data seed] 
+      (<! (timeout 5000))
+      (draw-chart! data)
+        (recur (vec (cons (last data) (drop-last data)))))))
+
+
 
 

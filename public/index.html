@@ -36,6 +36,21 @@ p {
   padding: 0.5em;
   margin: 0.5em;
 }
+
+.ex6 .chart {
+  height : 100px;
+  position: relative;
+}
+
+.col {
+  display :inline-block;
+  width : 20px;
+  background-color: steelblue;
+  transition: height 400ms ease;
+  border: 1px solid white;
+  position : absolute;
+  bottom : 0px;
+}
 </style>
   <body>
   <header>
@@ -69,6 +84,7 @@ p {
  
   Wrap up
   -->
+
 
   <h2>intro</h2>
 
@@ -134,19 +150,54 @@ p {
   provided.  It doesnt set innerHTML, it updates what it finds in place to match
   the desired state.</p>
 
+  <p>Its not often we have a complete picture of what dom structure we want
+  when we are authoring the code. In d3 rather than building each
+  <code>li</code> element and setting the copy by hand we would bind some data
+  to an expression which would generate each node based on a datum.</p>
 
-  
-  <div class="output">
-    <button id="btn-poke">poke</button>
-    <button id="btn-reset">reset</button>
-    <div class="ex-keys"></div>
-  </div>
+  <pre> <code class="javascript">
+var sel = d3.select("ol")
+  .selectAll("li")
+  .data(["wibble", "wobble", "woooo"])
+
+sel.enter().append("li").text(String)
+  </code> </pre>
+
+  <p>Let take a look at how we could achieve the same thing in c2 and
+  clojurescript.</p>
+
+  <pre>
+  <code class="clojure">
+(bind! ".ex-basic"  
+  [:div
+   [:ol
+     (map (fn [d] [:li d]) ["wibble" "wobble" "wo"])]])
+  </code>
+  </pre>
+
+  <p>From the perspective of c2, nothing has changed.  We are still parsing
+  a fully formed vector to the <code>bind!</code> method, only this time we
+  have generated the <code>:li</code> vectors on the fly using clojures
+  <code>map</code> function.  This seemingly simple change is very powerful,
+  since we can run multiple <code>map</code> expressions, or anything else from
+  clojures rich arsenal of functions to generate the desired dom structure.
+  Also, we are no longer in the position of forcing all that data into an array
+  bound to a top level node.  We can use any data we have to hand at any point
+  in the data structures hierarchy.
   
   <h2>the cover track</h2>
 
 
   <div class="ex4"></div>
   <div class="ex5"></div>
+
+  <div class="output">
+    <button id="btn-poke">poke</button>
+    <button id="btn-reset">reset</button>
+    <div class="ex-keys"></div>
+  </div>
+
+  <div class="ex6"></div>
   <script type="text/javascript" src="sketch-dev.js"></script>
   <script src="highlight/highlight.pack.js"></script>
   <script>hljs.initHighlightingOnLoad();</script>
