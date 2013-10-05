@@ -109,7 +109,7 @@ aside {
   libraries like Mick Bostocks awesome d3.  d3 talks about focusing on
   transformation not representation in contrast to much of the standard
   approach to UI construction.  I am excited about how a language with
-  functional roots could further influence the way I design and think.</p> 
+  functional roots could further influence the way I design and solve.</p> 
   
   <p>To get a feel for what building applications in clojurescript is like I've
   been doing a series of cover tracks (copying things already built).  Recently
@@ -133,30 +133,25 @@ aside {
   </code>
   </pre>
 
-  <p>The code is almost alarmingly simple, when I first saw it I assumed
-  there was something nasty waiting for me round the corner, things cant be 
-  this straight forward right?</p>
+  <p>The code is almost alarmingly simple</p>
 
   <p>Breaking it down at little there is a call to a function named
-  <code>bind!</code>, (the "!" indicates there are side effects) which takes
-  two parameters, a string css selector and a vector representing the desired
-  dom structure.</p>
+  <code>bind!</code> which takes two parameters, a string css selector as
+  a target and a clojure vector representing the desired dom structure.</p>
 
   <p><code>bind!</code> takes care of ensuring that the dom under the selector
-  matches the structure of the vector.  Heres the output.</p>
+  matches the structure of the vector.  It finds the target node , then walks
+  the dom below ensuring it matches the vector provided.  It doesn't just brute
+  force set innerHTML, it updates what it finds to match the desired state.
+  Heres the output, as expected.</p>
   
   <div class="ex-basic output"></div>
 
-  <p>Its worth taking a moment to understand how this simple example works.
-  The <code>bind!</code> function finds the desired target node from the css
-  selector, then walks the dom under that node ensuring it matches the vector
-  provided.  It doesnt set innerHTML, it updates what it finds in place to match
-  the desired state.</p>
 
   <p>Its not often we have a complete picture of the dom structure we want when
   we are authoring the code. In d3 rather than building each <code>li</code>
   element and setting the copy by hand we would bind some data to an expression
-  which would generate each node based on a datum.</p>
+  which would generate each node based on a datum, like so.</p>
 
   <pre> <code class="javascript">
 var sel = d3.select("ol")
@@ -200,15 +195,10 @@ sel.enter().append("li").text(String)
   <p>Take a look at the chart, and the required code in the <a
     href="http://mbostock.github.io/d3/tutorial/bar-1.html">Mikes original</a>.</p>
 
-  <aside>As a quick aside, if you haven't come across d3 before then stop
-    reading and devote whatever super valuable time you were giving to this
-    article to reading about d3!  I think its one of the most original and
-    elegant pieces of work I've seen for building visual interfaces.</aside>
-
-  <p>The chart built with d3 has a simple structure, where each of the 
-  elements (</p>
-
-  <div class="ex-bars output"></div>
+  <p>The chart has a simple structure, where each of the elements (bars, grid
+  lines etc.) are siblings, sized and positioned explicitly based on the data.
+  Lets start by walking through the code for generating the bars.  Here it is
+  in full. </p>
 
 <pre><code class="clojure">
 (bind! ".ex-bars"
@@ -229,8 +219,89 @@ sel.enter().append("li").text(String)
                 :y (* i bar-height)}]) data)]]]))
 </code></pre>
 
+  <p>I start with a <code>let</code> block to scope the values I'll need.  The
+  data to render, and some pixel sizes to feed to the svg nodes. Then
+  a function <code>scale-x</code> to size each bar relative to its data and the
+  space it has to fill.  Rather than computing this manually I've used a c2's
+  linear scale function.</p>
 
-  <div class="ex5 output"></div>
+  <pre><code class="clojure">
+scale-x (scale/linear 
+          :domain [0 (apply max data)] 
+          :range  [0 width])
+  </code></pre>
+
+  <p>The remainder is just a case of generating a representation of the nodes.
+  I need to build up something like the vector below </p>
+  
+  <pre><code class="clojure">
+[:div [:div.chart
+   [:svg {:width 200, :height 60}
+      [:rect {:width 53.3  :height 20 :y 0}] 
+      [:rect {:width 106.3 :height 20 :y 20}] 
+      [:rect {:width 200   :height 20 :y 40}]]]]
+  </code></pre>
+
+
+  <p>I've used the <code>map-indexed</code> function to iterate over the data
+  so I don't need to keep hold of a counter to increment the <code>y</code>
+  value, then used the <code>scale-x</code> function to calculate the
+  width.</p>
+
+    <pre><code class="clojure">
+(map-indexed (fn [i d]
+  [:rect {:width (scale-x d) 
+          :height bar-height, 
+          :y (* i bar-height)}]) data)
+  </code></pre>
+  
+  <p>Heres what that code snippit buys us.</p>
+
+  <div class="ex-bars output"></div>
+
+  <pre><code class="clojure">
+(bind! ".ex-full"
+  (let [data [4, 8, 15, 16, 23, 42] 
+        width 440 
+        height 140
+        bar-height 20
+        domain [0 (apply max data)]
+        scale-x (scale/linear 
+                  :domain domain 
+                  :range  [0 (- width 20)])
+        ticks (:ticks (ticks/search domain))]
+
+    [:div [:div
+     [:svg.chart {:width width, :height height}
+      [:g {:transform "translate(10,15)"}
+       
+       ;; grid line labels 
+       (map (fn [tick] 
+             [:text.rule {:x (scale-x tick) :dy -3 :text-anchor "middle"} tick]) ticks) 
+
+       ;; grid lines
+       (map (fn [tick] 
+             (let [x (scale-x tick)] 
+               [:line {:x1 x :x2 x :y2 120 :stroke "#ccc"}])) ticks)
+
+
+       ;; bars
+       (map-indexed (fn [i d]
+        [:rect {:width (scale-x d) 
+                :height bar-height, 
+                :y (* i bar-height)}]) data)
+
+       ;; bar labels
+       (map-indexed (fn [i d]
+        [:text {:x (scale-x d) 
+                :y (+ (/ bar-height 2) (* i bar-height))
+                :text-anchor "end"
+                :dx -3
+                :dy ".35em"} d]) data)]]]]))
+  </code></pre>
+
+
+  <div class="ex-full output"></div>
 
   <div class="output">
     <button id="btn-poke">poke</button>

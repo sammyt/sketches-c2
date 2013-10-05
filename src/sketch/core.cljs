@@ -73,47 +73,41 @@
 ;; Example 5
 ;; SVG chart++
 ;;
-(bind! ".ex5"
+(bind! ".ex-full"
   (let [data [4, 8, 15, 16, 23, 42] 
-        width 440 height 140
+        width 440 
+        height 140
+        bar-height 20
         domain [0 (apply max data)]
-        s (scale/linear :domain domain 
-                        :range  [0 (- width 20)])
-        h 20
+        scale-x (scale/linear 
+                  :domain domain 
+                  :range  [0 (- width 20)])
         ticks (:ticks (ticks/search domain))]
 
     [:div [:div
-     [:svg.chart {:width width, :height height
-                  :xmlns "http://www.w3.org/2000/svg"}
+     [:svg.chart {:width width, :height height}
       [:g {:transform "translate(10,15)"}
-
        
        ;; grid line labels 
-       (map (fn [t] 
-             (let[x (s t)] 
-               [:text.rule {:x x :y 0 :dy -3 :text-anchor "middle"} t])) ticks)
+       (map (fn [tick] 
+             [:text.rule {:x (scale-x tick) :dy -3 :text-anchor "middle"} tick]) ticks) 
 
        ;; grid lines
-       (map (fn [t] 
-             (let [x (s t)] 
-               [:line {:x1 x :x2 x 
-                       :y1 0 :y2 120 
-                       :stroke "#ccc"}])) ticks)
+       (map (fn [tick] 
+             (let [x (scale-x tick)] 
+               [:line {:x1 x :x2 x :y2 120 :stroke "#ccc"}])) ticks)
 
 
        ;; bars
        (map-indexed (fn [i d]
-        [:rect {:width (s d) :height h, :y (* i h)}
-         [:svg:animate {:attributeName "width" 
-                        :attributeType "XML"
-                        :to (str (s d)) 
-                        :from 0
-                        :begin 0
-                        :dur "600ms"}]]) data)
+        [:rect {:width (scale-x d) 
+                :height bar-height, 
+                :y (* i bar-height)}]) data)
+
        ;; bar labels
        (map-indexed (fn [i d]
-        [:text {:x (s d) 
-                :y (+ (/ h 2) (* i h))
+        [:text {:x (scale-x d) 
+                :y (+ (/ bar-height 2) (* i bar-height))
                 :text-anchor "end"
                 :dx -3
                 :dy ".35em"} d]) data)]]]]))
