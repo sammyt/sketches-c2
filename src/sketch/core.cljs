@@ -52,20 +52,22 @@
 ;; Example 4
 ;; SVG chart
 ;;
-(bind! ".ex4"
+(bind! ".ex-bars"
   (let [data [4, 8, 15]
-        width 200 height 100
-        s (scale/linear :domain [0 (apply max data)] 
-                        :range  [0 width])
-        h 20]
+        width 200 
+        height 60
+        bar-height 20
+        scale-x (scale/linear 
+                  :domain [0 (apply max data)] 
+                  :range  [0 width])]
 
     [:div [:div.chart
      [:svg {:width width, :height height}
      
       (map-indexed (fn [i d]
-        [:rect {:width (s d) 
-                :height h, 
-                :y (* i h)}]) data)]]]))
+        [:rect {:width (scale-x d) 
+                :height bar-height, 
+                :y (* i bar-height)}]) data)]]]))
 
 ;; --------------------- 
 ;; Example 5
@@ -81,36 +83,40 @@
         ticks (:ticks (ticks/search domain))]
 
     [:div [:div
-     [:svg.chart {:width width, :height height}
+     [:svg.chart {:width width, :height height
+                  :xmlns "http://www.w3.org/2000/svg"}
       [:g {:transform "translate(10,15)"}
 
-       ;; bars
-      (map-indexed (fn [i d]
-        [:rect {:width (s d) :height h, :y (* i h)}]) data)
+       
+       ;; grid line labels 
+       (map (fn [t] 
+             (let[x (s t)] 
+               [:text.rule {:x x :y 0 :dy -3 :text-anchor "middle"} t])) ticks)
 
+       ;; grid lines
+       (map (fn [t] 
+             (let [x (s t)] 
+               [:line {:x1 x :x2 x 
+                       :y1 0 :y2 120 
+                       :stroke "#ccc"}])) ticks)
+
+
+       ;; bars
+       (map-indexed (fn [i d]
+        [:rect {:width (s d) :height h, :y (* i h)}
+         [:svg:animate {:attributeName "width" 
+                        :attributeType "XML"
+                        :to (str (s d)) 
+                        :from 0
+                        :begin 0
+                        :dur "600ms"}]]) data)
        ;; bar labels
-      (map-indexed (fn [i d]
+       (map-indexed (fn [i d]
         [:text {:x (s d) 
                 :y (+ (/ h 2) (* i h))
                 :text-anchor "end"
                 :dx -3
-                :dy ".35em"} d]) data)
-     
-
-       ;; grid lines
-      (map (fn [t] 
-             (let [x (s t)] 
-               [:line {:x1 x :x2 x 
-                       :y1 0 :y2 120 
-                       :stroke "#ccc"}])) 
-           ticks)
-
-       ;; grid line labels 
-      (map (fn [t] 
-             (let[x (s t)] 
-               [:text.rule {:x x :y 0 :dy -3 :text-anchor "middle"} t])) 
-           ticks)]]]]))
-
+                :dy ".35em"} d]) data)]]]]))
 
 
 (defn draw-chart! [data]
@@ -129,7 +135,7 @@
   (draw-chart! seed)
   (go 
     (loop [data seed] 
-      (<! (timeout 5000))
+      (<! (timeout 3000))
       (draw-chart! data)
         (recur (vec (cons (last data) (drop-last data)))))))
 
