@@ -8,7 +8,7 @@
   </head>
 <style>
 body {
-  padding-left : 15%;
+  padding-left : 1%;
 }
 .chart {
   font: 10px sans-serif;
@@ -146,15 +146,14 @@ sel.enter().append("li").text(String)
   </code>
   </pre>
 
-  <p>From the perspective of c2, nothing has changed.  We are still parsing
-  a fully formed vector to the <code>bind!</code> method, only this time we
-  have generated the <code>:li</code> vectors on the fly using clojures
-  <code>map</code> function.  This seemingly simple change is very powerful,
-  since we can run multiple <code>map</code> expressions, or anything else from
-  clojures rich arsenal of functions to generate the desired dom structure.
-  Also, we are no longer in the position of forcing all that data into an array
-  bound to a top level node.  We can use any data we have to hand at any point
-  in the data structures hierarchy.
+  <p>From c2's perspective nothing has changed.  We are still parsing a fully
+  formed vector to the <code>bind!</code> method, only this time we have
+  generated the <code>:li</code> vectors on the fly using clojures
+  <code>map</code> function.  This simple idea is very powerful, since we can
+  run multiple <code>map</code> expressions, or anything else from clojures
+  rich arsenal to generate the desired vector.  Also, we are no longer in the
+  position of forcing all that data into an array bound to a top level node.
+  We can use any data we have to hand at any point in the structures hierarchy.
 
   
   <h2>Covering a d3 chart</h2>
@@ -166,11 +165,13 @@ sel.enter().append("li").text(String)
   library.</p>
 
   <p>Take a look at the chart, and the required code in the <a
-    href="http://mbostock.github.io/d3/tutorial/bar-1.html">Mikes original</a>.</p>
+    href="http://mbostock.github.io/d3/tutorial/bar-1.html">Mikes original</a>
+  (at the bottom).</p>
 
   <p>The chart has a simple structure, where each of the elements (bars, grid
-  lines etc.) are siblings, sized and positioned explicitly based on the data.
-  Lets start by walking through some code for generating bars.</p>
+  lines etc.) are all siblings, sized and positioned explicitly based on the
+  data.  To get going I'll start by walking through some code for generating
+  the bars.</p>
 
 <pre><code class="clojure">
 (bind! ".ex-bars"
@@ -203,9 +204,10 @@ scale-x (scale/linear
           :range  [0 width])
   </code></pre>
 
-  <p>The remainder is just a case of generating a representation of the nodes.
-  In order to see three bars I'll need a vector with some rects sized according
-  to the data, something like the following.</p>
+  <p>The body of the <code>let</code> uses those values to generate
+  a representation of the nodes in vector form.  I'm aiming for something like
+  you can see below.  Three rect elements with widths and positions relative to
+  the data.</p>
   
   <pre><code class="clojure">
 [:div [:div.chart
@@ -246,7 +248,7 @@ scale-x (scale/linear
   <pre><code class="clojure"> (:ticks (ticks/search domain)) </code></pre>
 
   <p>The search function returns a number of properties related to ticks, but
-  I just needed that tick data points a which to render grid lines found under
+  I just needed the tick data points at which to render grid lines found under
   the <code>:ticks</code> keyword.  The resulting sequence contains the
   following values.</p>
 
@@ -254,8 +256,8 @@ scale-x (scale/linear
 (0 10 20 30 40)
   </code></pre>
  
-  <p>I could then reuse the <code>scale-x</code> function to find the x coordinates
-  to draw the lines and position the text.</p>
+  <p>I could then reuse the <code>scale-x</code> function with those values to
+  find the x coordinates to draw the lines and position the text.</p>
 
   <p>Here is the full code, with bars, bar labels, grid lines and grid labels all
   being built.</p>
@@ -315,7 +317,7 @@ scale-x (scale/linear
 
   <h2>A little more c2</h2>
 
-  <p>One thing that the cover track didn't cover is how to manage any form of
+  <p>One thing that the cover track didn't address is how to manage any form of
   animation.  c2 specifically doesn't include any animation functions, which
   for huge swathes of the kinds of animations that are needed doesn't matter
   one bit.  We can leverage the browsers in built animation abilities like CSS
@@ -340,15 +342,15 @@ transition: height 400ms ease;
 (defn draw-chart! [data]
   (bind! ".ex-moving"
     [:div [:div.chart  
-      (let [scale-x (scale/linear :domain [0 20] :range [0 100])]
+      (let [scale-x (scale/linear :domain [0 30] :range [0 100])]
 
         (map-indexed 
-          (fn [i d] 
-            [:div.col 
-              {:style {:height (str (scale-x d) "px")
-                       :left (str (* i 21) "px")}}]) data))]]))
+          (fn [i d] [:div.col 
+                     {:style {:height (str (scale-x d) "px")
+                              :left (str (* i 21) "px")}}]) data))]]))
 
-(let [seed (range 10)]
+
+(let [seed (range 30)]
   (draw-chart! seed)
   (go 
     (loop [data seed] 

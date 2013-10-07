@@ -1,11 +1,9 @@
 (ns sketch.core
   (:require
-    [c2.core :refer [unify]]
+    [c2.core]
     [c2.scale :as scale]
     [c2.ticks :as ticks]
     [goog.dom :as dom]
-    [goog.events :as events]
-    [goog.events.EventType]
     [cljs.core.async :refer [>! <! chan timeout alts!]])
   (:require-macros 
     [c2.util :refer [bind! pp]]
@@ -89,7 +87,7 @@
 (defn draw-chart! [data]
   (bind! ".ex-moving"
     [:div [:div.chart  
-      (let [scale-x (scale/linear :domain [0 20] :range [0 100])]
+      (let [scale-x (scale/linear :domain [0 30] :range [0 100])]
 
         (map-indexed 
           (fn [i d] [:div.col 
@@ -97,7 +95,7 @@
                               :left (str (* i 21) "px")}}]) data))]]))
 
 
-(let [seed (range 10)]
+(let [seed (range 30)]
   (draw-chart! seed)
   (go 
     (loop [data seed] 
