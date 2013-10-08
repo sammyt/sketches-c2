@@ -55,7 +55,7 @@
     [:div [:div
      [:svg.chart {:width width, :height height}
       [:g {:transform "translate(10,15)"}
-      (pp ticks) 
+
        ;; grid line labels 
        (map (fn [tick] 
              [:text.rule {:x (scale-x tick) :dy -3 :text-anchor "middle"} tick]) ticks) 

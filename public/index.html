@@ -9,6 +9,7 @@
 <style>
 body {
   padding-left : 1%;
+  padding-bottom: 150px;
 }
 .chart {
   font: 10px sans-serif;
@@ -62,21 +63,14 @@ aside {
 </style>
   <body>
   <header>
-    <h1>Cover Tracks</h2>
-    <p>ClojureScript on "A Bar Chart, Part 1"</p>
+    <h1>Notes on c2</h2>
+    <p>covering "A Bar Chart, Part 1"</p>
   </header>
-
-  <!--
-  Things to cover.
-    - possibility of client/server rendered views
-    - demonstrate object consistency with unify
-    - Wrap up
-  -->
 
   <p>Working as a client side developer there have been scant opportunities for
   me to pursue a passion and use lisp in earnest.  ClojureScript has
   unequivocally removed that obstacle, by bringing a modern and powerful lisp
-  to javascript environments.</p>
+  to javascript environments. Hurrah!</p>
   
   <p>At a glance, Clojure, a predominately functional language might not seem
   like a natural fit for client side development.  Much of the discussion in
@@ -84,16 +78,17 @@ aside {
   to listen for changes in those models.  But despite the inevitability of state
   in the client a more functional approach to design can reap many rewards.</p>
 
-  <p>To get a feel for what building applications in clojurescript is like I've
+  <p>To get a feel for what building applications in ClojureScript is like I've
   been doing a series of cover tracks (copying things already built).  Recently
   I've been focusing on a library called c2, which is heavily inspired by d3
-  but also takes many cues from clojure to give an idiomatic experience.</p>
+  but also takes many cues from Clojure to give an idiomatic experience.  In
+  this article I'll try to explain how I covered a simple chart originally
+  built in d3.</p>
 
   <h2>c2 basics</h2>
 
-  <p>Before jumping in and trying to cover one of Mikes d3 demos its worth
-  going over the basics of c2 to get a sense for its API.  Take a look at how
-  to generate a simple ordered-list.</p>
+  <p>Before jumping in its worth going over the basics of c2 to get a sense for
+  its API.  Take a look at how to generate a simple ordered-list.</p>
 
   <pre>
   <code class="clojure">
@@ -156,7 +151,7 @@ sel.enter().append("li").text(String)
   We can use any data we have to hand at any point in the structures hierarchy.
 
   
-  <h2>Covering a d3 chart</h2>
+  <h2>The Cover Track</h2>
 
   <p>Cover tracks are a nice way to get an idea of how a technology feels to
   work with, since you have a clear goal and a benchmark in complexity to view
@@ -235,8 +230,8 @@ scale-x (scale/linear
 
   <div class="ex-bars output"></div>
 
-  <p>Generating the rest of the data structure of the chart is just as simple.
-  Bar labels are added as svg text nodes and positioned with the
+  <p>Generating the rest of the data structure of the chart follows the same
+  pattern.  Bar labels are added as svg text nodes and positioned with the
   <code>scale-x</code> function. They are added after the rects in the vector
   to ensure they are on top of the bars when displayed.</p>
 
@@ -256,7 +251,7 @@ scale-x (scale/linear
 (0 10 20 30 40)
   </code></pre>
  
-  <p>I could then reuse the <code>scale-x</code> function with those values to
+  <p>I then reuse the <code>scale-x</code> function with those values to
   find the x coordinates to draw the lines and position the text.</p>
 
   <p>Here is the full code, with bars, bar labels, grid lines and grid labels all
@@ -309,19 +304,18 @@ scale-x (scale/linear
   
   <div class="ex-full output"></div>
   
-  <p>What stands out for me is how easy it is to look at the code generating 
+  <p>What stands out for me is how easy it is to look at the code generating
   the vector and understand the shape of the DOM that will be generated.  There
-  is very little mental processing needed to go from code to presentation.</p>
-  
-  more here pls 
+  is very little mental processing needed to go from code to presentation.
+  I didn't have to think (or code) in terms of how I wanted the chart to be
+  built, I focused in stead on what I wanted built.</p>
 
   <h2>A little more c2</h2>
 
   <p>One thing that the cover track didn't address is how to manage any form of
-  animation.  c2 specifically doesn't include any animation functions, which
-  for huge swathes of the kinds of animations that are needed doesn't matter
-  one bit.  We can leverage the browsers in built animation abilities like CSS
-  transforms or svg animate nodes.</p>
+  animation. c2 doesn't include any animation functions, but working in the
+  browser we can leverage any of the in built capabilities like CSS transforms
+  or svg animate nodes.</p>
 
   <p>All great in theory but I still wanted to prove it to myself with another
   example.</p>
@@ -364,6 +358,26 @@ transition: height 400ms ease;
   them in place.  If it was just clobbering the <code>innerHTML</code>
   property of the target we wouldn't get any animation at all.</p> 
 
+  <h2>Wrapping up</h2>
+
+  <p>I really enjoy working with d3, I think its a fantastic library so I was
+  curious what working with c2 would be like since at a surface level its API
+  has diverged a long way from d3.  I have some experience porting d3's ideas
+  to other languages having built a python version myself.  I stuck quite
+  rigidly to d3's API, and I think the end result was a little uncomfortable.
+  In ClojureScript c2's <code>bind!</code> feels very natural. There is no
+  interaction with the DOM, only data.  As the author puts it "the view is
+  data".</p>
+
+  <p>That idea of the view as data opens up some compelling opportunities,
+  since pure functions can generate the desired vector representation based on
+  just the data.  Those pure functions (free from side effects like
+  <code>appendChild</code>) can be used both in the client or on the server.
+  I've done quite a bit of work trying to cleanly get d3 code to run in server
+  environments, but the global pervasive nature of the DOM API throws up some
+  real complications.  By adopting this lisp like mantra of code as data c2 has
+  sidestepped all those issues from the start.</p> 
+  
   <script type="text/javascript" src="sketch-dev.js"></script>
   <script src="highlight/highlight.pack.js"></script>
   <script>hljs.initHighlightingOnLoad();</script>
