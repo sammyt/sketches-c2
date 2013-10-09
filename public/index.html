@@ -80,10 +80,10 @@ aside {
 
   <p>To get a feel for what building applications in ClojureScript is like I've
   been doing a series of cover tracks (copying things already built).  Recently
-  I've been focusing on a library called c2, which is heavily inspired by d3
-  but also takes many cues from Clojure to give an idiomatic experience.  In
-  this article I'll try to explain how I covered a simple chart originally
-  built in d3.</p>
+  I've been focusing on a library called c2, which is heavily inspired by Mick
+  Bostocks excellent d3 but also takes many cues from Clojure to give an
+  idiomatic experience.  In this article I'll try to explain how I covered
+  a simple chart originally built in d3.</p>
 
   <h2>c2 basics</h2>
 
@@ -92,7 +92,7 @@ aside {
 
   <pre>
   <code class="clojure">
-(bind! ".ex-basic"  
+(bind! ".ex-basic" 
   [:div
    [:ol
      [:li "wibble"]
@@ -119,7 +119,7 @@ aside {
   <p>Its not often we have a complete picture of the dom structure we want when
   we are authoring the code. In d3 rather than building each <code>li</code>
   element and setting the copy by hand we would bind some data to an expression
-  which would generate each node based on a datum, like so.</p>
+  which would generate each node based on a datum, so something like this.</p>
 
   <pre> <code class="javascript">
 var sel = d3.select("ol")
@@ -146,15 +146,15 @@ sel.enter().append("li").text(String)
   generated the <code>:li</code> vectors on the fly using clojures
   <code>map</code> function.  This simple idea is very powerful, since we can
   run multiple <code>map</code> expressions, or anything else from clojures
-  rich arsenal to generate the desired vector.  Also, we are no longer in the
+  arsenal to generate the desired vector.  Also, we are no longer in the
   position of forcing all that data into an array bound to a top level node.
-  We can use any data we have to hand at any point in the structures hierarchy.
+  We can use any data we have to hand at any point in the structure.
 
   
-  <h2>The Cover Track</h2>
+  <h2>Onto the Cover Track</h2>
 
   <p>Cover tracks are a nice way to get an idea of how a technology feels to
-  work with, since you have a clear goal and a benchmark in complexity to view
+  work in, since you have a clear goal and a benchmark of complexity to view
   your solution in the light of. I'm covering a very simple d3 example here,
   but in doing so I got a great feel for using the language, tools and
   library.</p>
@@ -199,10 +199,10 @@ scale-x (scale/linear
           :range  [0 width])
   </code></pre>
 
-  <p>The body of the <code>let</code> uses those values to generate
-  a representation of the nodes in vector form.  I'm aiming for something like
-  you can see below.  Three rect elements with widths and positions relative to
-  the data.</p>
+  <p>The body of the expression uses those values to generate a representation
+  of the nodes in vector form.  I'm aiming for something like you can see
+  below.  Three rect elements with widths and positions relative to the
+  data.</p>
   
   <pre><code class="clojure">
 [:div [:div.chart
@@ -251,7 +251,7 @@ scale-x (scale/linear
 (0 10 20 30 40)
   </code></pre>
  
-  <p>I then reuse the <code>scale-x</code> function with those values to
+  <p>I can then reuse the <code>scale-x</code> function with those values to
   find the x coordinates to draw the lines and position the text.</p>
 
   <p>Here is the full code, with bars, bar labels, grid lines and grid labels all
@@ -308,7 +308,7 @@ scale-x (scale/linear
   the vector and understand the shape of the DOM that will be generated.  There
   is very little mental processing needed to go from code to presentation.
   I didn't have to think (or code) in terms of how I wanted the chart to be
-  built, I focused in stead on what I wanted built.</p>
+  built, I focused instead on what I wanted built.</p>
 
   <h2>A little more c2</h2>
 
