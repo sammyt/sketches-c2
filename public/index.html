@@ -2,19 +2,40 @@
 <html>
 <head>
   <meta charset="utf-8">
-  <title>notes on c2</title> 
+  <title>ClojureScript: Notes on c2</title> 
+  <script type="text/javascript" src="//use.typekit.net/oxa1lve.js"></script>
+  <script type="text/javascript">try{Typekit.load();}catch(e){}</script>
 
   <link rel="stylesheet" href="highlight/styles/ascetic.css">
   </head>
 <style>
+
+h1,h2,h3,h4,h5,h6 { font-family: 'learning-curve'; }
+
+h1 { font-size: 3em; }
+h2 { font-size: 2em; }
+
 body {
-  padding-left : 1%;
+  font-family: 'museo-slab', serif;
+  font-size: 22px;
+  line-height: 1.5em;
+  background-color: #f3f3f3;
+  text-rendering: optimizeLegibility;
+}
+
+.container {
+  width: 32em;
+  margin: 0 auto;
+}
+
+body {
   padding-bottom: 150px;
 }
 .chart {
   font: 10px sans-serif;
   shape-rendering: crispEdges;
 }
+
 .chart rect {
   stroke : white;
   fill : steelblue; /* magnum? */
@@ -28,22 +49,18 @@ body {
 
 pre {
   margin: 0.5em;
-}
-
-p {
-  width: 40em;
+  font-size: 16px;
+  line-height: 1em;
 }
 
 aside {
   margin-left: 2em;
-  width : 36em;
 }
 
 .output {
   border : 2px solid #eee;
-  width: 40em;
   padding: 0.5em;
-  margin: 0.5em;
+  background-color: white;
 }
 
 .ex-moving .chart {
@@ -62,9 +79,9 @@ aside {
 }
 </style>
   <body>
+  <div class="container">
   <header>
     <h1>Notes on c2</h2>
-    <p>covering "A Bar Chart, Part 1"</p>
   </header>
 
   <p>Working as a client side developer there have been scant opportunities for
@@ -275,12 +292,15 @@ scale-x (scale/linear
        
        ;; grid line labels 
        (map (fn [tick] 
-             [:text.rule {:x (scale-x tick) :dy -3 :text-anchor "middle"} tick]) ticks) 
+             [:text.rule {:x (scale-x tick) 
+                          :dy -3 
+                          :text-anchor "middle"} tick]) ticks) 
 
        ;; grid lines
        (map (fn [tick] 
              (let [x (scale-x tick)] 
-               [:line {:x1 x :x2 x :y2 120 :stroke "#ccc"}])) ticks)
+               [:line {:x1 x :x2 x :y2 120 :stroke "#ccc"}])) 
+       ticks)
 
 
        ;; bars
@@ -387,5 +407,6 @@ transition: height 400ms ease;
   <script type="text/javascript" src="sketch-dev.js"></script>
   <script src="highlight/highlight.pack.js"></script>
   <script>hljs.initHighlightingOnLoad();</script>
+</div>
 </body>
 </html>

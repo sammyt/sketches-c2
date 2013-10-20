@@ -1,5 +1,6 @@
 (ns sketch.core
   (:require
+    [clojure.browser.repl :as repl]
     [c2.core]
     [c2.scale :as scale]
     [c2.ticks :as ticks]
@@ -8,6 +9,7 @@
   (:require-macros 
     [c2.util :refer [bind! pp]]
     [cljs.core.async.macros :refer [go]]))
+
 
 (bind! ".ex-basic"
   [:div
@@ -104,5 +106,4 @@
         (recur (vec (cons (last data) (drop-last data)))))))
 
 
-
-
+'(repl/connect "http://localhost:9000/repl")
